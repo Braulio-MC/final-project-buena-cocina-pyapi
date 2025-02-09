@@ -6,3 +6,6 @@ SENTIMENT_ANALYZER_LABEL_NEGATIVE = "negativo"
 SENTIMENT_ANALYZER_LABEL_NEUTRAL = "neutral"
 SENTIMENT_ANALYZER_LABEL_POSITIVE = "positivo"
 SENTIMENT_ANALYZER_LABEL_VERY_POSITIVE = "muy positivo"
+SENTENCE_TRANSFORMERS_MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2" # Modelo en español
+EMBEDDINGS_JOBLIB = "../data/model/embeddings.jolib"
+PRODUCTS_IDS_CSV = "../data/model/product_ids.csv"
