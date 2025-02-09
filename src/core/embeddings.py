@@ -9,9 +9,9 @@ def generate_embeddings(df):
 
     """
         Esta funcio crea embeddings:
-        Los embeddings son una tecnica fundamental de IA para transformar en este caso categorias listas de
-        numeros campurando el significado, contexto o relaciones de datos en matrices premitiendo que las maquinas
-        entiendan
+        Los embeddings son una tecnica fundamental de IA para transformar en este caso categorias a listas de
+        numeros capturando asi el significado, contexto o relaciones de datos en matrices premitiendo que las maquinas
+        entiendan y puedan hacer operaciones como comparaciones.
     """
 
     text_data = df['text_features'].tolist()
