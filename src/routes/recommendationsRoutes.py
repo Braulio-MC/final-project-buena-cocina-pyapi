@@ -1,19 +1,24 @@
-from fastapi import APIRouter, Depends, Query
-from typing import Annotated
-from controllers.recommenderController import RecommenderController
+from fastapi import APIRouter, HTTPException
+from data.service.recommenderService import RecommenderService
+from core.firebaseHelper import db
 
 router = APIRouter()
+recommender_service = RecommenderService()
 
-@router.get('recommendations/{product_id}')
-async def get_recommendations(
-    product_id: str,
-    controller: Annotated[RecommenderController, Depends()],
-    top_n: Annotated[int, Query(ge=1, le=20)] = 5
-):
-    """
-       Obtiene productos recomendados basados en embeddings.
-       :param product_id: ID del producto de referencia
-       :param top_n: Número de recomendaciones (máx. 20)
-    """
 
-    return await controller.get_recommendations(product_id, top_n)
+@router.get("/products/{product_id}")
+async def get_recommendations(product_id: str, top_n: int = 10):
+    """Devuelve productos recomendados para un ID dado."""
+    try:
+        print(f"Producto recibido: {product_id}")
+        recommendations = await recommender_service.get_recommendations(product_id, top_n)
+        return {"recommendations": recommendations}
+    except ValueError as e:
+        print(f"Error de valor: {e}")
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+        raise HTTPException(status_code=500, detail="Error interno del servidor")
+
+
+
