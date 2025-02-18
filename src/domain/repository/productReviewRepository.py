@@ -8,11 +8,11 @@ class ProductReviewRepository:
     def __init__(self, service: Annotated[ProductReviewService, Depends()]):
         self.service = service
 
-    async def get_all(self) -> list[ProductReviewDomain | None]:
-        response = await self.service.get_all()
+    def get_all(self) -> list[ProductReviewDomain | None]:
+        response = self.service.get_all()
         return [review.to_domain() for review in response]
     
-    async def paging_by_product_id_with_range(
+    def paging_by_product_id_with_range(
         self,
         product_id: str,
         limit: int,
@@ -20,7 +20,7 @@ class ProductReviewRepository:
         start_date: Optional[datetime] = None, 
         end_date: Optional[datetime] = None
     ) -> dict[str, Any]:
-        response = await self.service.paging_by_product_id_with_range(
+        response = self.service.paging_by_product_id_with_range(
             product_id,
             limit,
             cursor,
@@ -32,7 +32,7 @@ class ProductReviewRepository:
             'next_cursor': response['next_cursor']
         }
     
-    async def paging_by_user_id_with_range(
+    def paging_by_user_id_with_range(
         self,
         user_id: str,
         limit: int,
@@ -40,7 +40,7 @@ class ProductReviewRepository:
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None
     ) -> dict[str, Any]:
-        response = await self.service.paging_by_user_id_with_range(
+        response = self.service.paging_by_user_id_with_range(
             user_id,
             limit,
             cursor,

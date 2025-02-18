@@ -6,11 +6,11 @@ class StoreReviewService:
     def __init__(self):
         pass
 
-    async def get_all(self) -> list[StoreReviewNetwork | None]:
+    def get_all(self) -> list[StoreReviewNetwork | None]:
         store_reviews = StoreReviewNetwork.collection.fetch()
         return list(store_reviews)
 
-    async def paging_by_store_id_with_range(
+    def paging_by_store_id_with_range(
         self,
         store_id: str,
         limit: int,
@@ -36,7 +36,7 @@ class StoreReviewService:
             'next_cursor': next_cursor
         }
     
-    async def paging_by_user_id_with_range(
+    def paging_by_user_id_with_range(
         self, 
         user_id: str,
         limit: int,

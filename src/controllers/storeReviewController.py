@@ -9,14 +9,14 @@ class StoreReviewController:
     def __init__(self, repository: Annotated[StoreReviewRepository, Depends()]):
         self.repository = repository
     
-    async def get_all(self):
+    def get_all(self):
         """Devuelve todas las reviews analizadas"""
-        reviews = await self.repository.get_all()
+        reviews = self.repository.get_all()
         cleaned_reviews = [cleaning_review(review) for review in reviews]
         analyzed_reviews = [feeling_review(review) for review in cleaned_reviews]
         return analyzed_reviews
     
-    async def paging_by_store_id_with_range(
+    def paging_by_store_id_with_range(
         self,
         store_id: str,
         limit: int,
@@ -29,7 +29,7 @@ class StoreReviewController:
         :optional parameers: cursor, start_date, end_date
         :return un diccionario que contiene el comentario analizado de acuerdo al store_id proporcionado y el cursor para la paginación
         """
-        reviews = await self.repository.paging_by_store_id_with_range(store_id, limit, cursor, start_date, end_date)
+        reviews = self.repository.paging_by_store_id_with_range(store_id, limit, cursor, start_date, end_date)
         cleaned_reviews = [cleaning_review(review) for review in reviews['data']]
         analyzed_reviews = [feeling_review(review) for review in cleaned_reviews]
         return {
@@ -40,7 +40,7 @@ class StoreReviewController:
             }
         }
     
-    async def paging_by_user_id_with_range(
+    def paging_by_user_id_with_range(
         self, 
         user_id: str,
         limit: int,
@@ -53,7 +53,7 @@ class StoreReviewController:
         :optional parameers: cursor, start_date, end_date
         :return un diccionario que contiene el comentario analizado de acuerdo al user_id proporcionado y el cursor para la paginación
         """
-        reviews = await self.repository.paging_by_user_id_with_range(user_id, limit, cursor, start_date, end_date)
+        reviews = self.repository.paging_by_user_id_with_range(user_id, limit, cursor, start_date, end_date)
         cleaned_reviews = [cleaning_review(review) for review in reviews['data']]
         analyzed_reviews = [feeling_review(review) for review in cleaned_reviews]
         return {
