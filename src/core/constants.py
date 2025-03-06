@@ -20,3 +20,20 @@ PRODUCT_REVIEW_ROUTES_PAGING_BY_USER_ID_WITH_RANGE_CACHE_EXPIRE = 60 * 3 # 3 min
 STORE_REVIEW_ROUTES_GET_ALL_CACHE_EXPIRE = 60 * 10 # 10 minutes
 STORE_REVIEW_ROUTES_PAGING_BY_STORE_ID_WITH_RANGE_CACHE_EXPIRE = 60 * 5 # 5 minutes
 STORE_REVIEW_ROUTES_PAGING_BY_USER_ID_WITH_RANGE_CACHE_EXPIRE = 60 * 3 # 3 minutes
+EMBEDDINGS_MODEL = "all-MiniLM-L6-v2"
+SENTENCE_TRANSFORMERS_MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2" # Modelo en español
+
+# Ayuda para el bot
+CATEGORY_SYNONYMS = {
+    "comida rápida": ["fast food", "hamburguesas", "snacks, pizza, hotdogs, botana frituras, sanwich, lonches,"],
+    "pizza": ["pizzería", "pizzas", "italiano"],
+    "bebidas": ["refrescos", "jugos", "cócteles, cafe, preparados"],
+    "postres": ["dulces", "pasteles", "helados"],
+    "saludable": ['ensalda', 'jugos', 'batidos']
+}
+
+STORE_SYNONYMS = {
+    "McDonald's": ["McD", "Mc Donalds", "McDonalds"],
+    "Domino's": ["Dominos", "Domino"],
+    "Starbucks": ["coffee shop", "café"]
+}

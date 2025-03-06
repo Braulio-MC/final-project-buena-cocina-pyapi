@@ -1,0 +1,77 @@
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
+from core.constants import  SENTENCE_TRANSFORMERS_MODEL_NAME
+from core.dataPreprocessing import create_features_df
+from sentence_transformers import SentenceTransformer
+from core.firebaseHelper import db
+
+
+class Recommender:
+    def __init__(self):
+        """Carga embeddings e IDs de productos desde Firestore, generándolos si no existen."""
+        embeddings_ref = db.collection("embeddings").stream()
+        self.embeddings = []
+        self.product_ids = []
+
+        for doc in embeddings_ref:
+            data = doc.to_dict()
+            self.product_ids.append(doc.id)
+            self.embeddings.append(data["embedding"])
+
+        # Si no hay embeddings en Firestore, generarlos
+        if not self.embeddings:
+            print("Embeddings no encontrados en Firestore. Generando embeddings...")
+            self.generate_and_save_embeddings()
+        else:
+            print("Embeddings cargados desde Firestore correctamente.")
+
+
+    def generate_and_save_embeddings(self):
+        """Genera los embeddings de los productos y los guarda en Firestore."""
+        model = SentenceTransformer(SENTENCE_TRANSFORMERS_MODEL_NAME)  # Modelo para generar embeddings
+        df = create_features_df()  # Obtener los datos preprocesados
+
+        if 'text_features' not in df.columns:
+            raise ValueError("La columna 'text_features' no se encuentra en el DataFrame.")
+
+        # Generar embeddings
+        embeddings = model.encode(df['text_features'].tolist(), show_progress_bar=True)
+
+        # Guardar embeddings y product_ids en Firestore
+        batch = db.batch()
+        for product_id, embedding in zip(df['id'], embeddings):
+            doc_ref = db.collection("embeddings").document(product_id)
+            batch.set(doc_ref, {"embedding": embedding.tolist()})  # Guardar como lista
+        batch.commit()
+
+        print("Embeddings generados y guardados en Firestore correctamente.")
+
+    def recommend(self, product_id: str, top_n: int = 5):
+        """
+        Recomienda productos similares a un producto dado.
+
+         Parámetros:
+        - product_id (str): ID del producto a buscar.
+        - top_n (int): Número de recomendaciones.
+
+         Retorno:
+        - Lista con los `top_n` productos más similares.
+        """
+        print(f"Recomendando productos para el ID: {product_id}")
+        product_id = product_id.strip()  # Eliminar espacios en blanco y saltos de línea
+
+        if product_id not in self.product_ids:
+            raise ValueError(f"El ID del producto '{product_id}' no se encuentra en la base de datos.")
+
+        #  **Obtener el índice del producto consultado**
+        idx = self.product_ids.index(product_id)
+        target_embedding = np.array(self.embeddings[idx]).reshape(1, -1) # Embedding del producto consultado
+
+        # **Calcular la similitud de coseno con todos los productos**
+        similarities = cosine_similarity(target_embedding, self.embeddings)[0]
+
+        # **Obtener los índices de los productos más similares**
+        top_indices = np.argsort(similarities)[-top_n - 1:-1][::-1]
+
+        # **Devolver los IDs de los productos similares**
+        return [self.product_ids[i] for i in top_indices]
