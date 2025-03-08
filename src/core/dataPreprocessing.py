@@ -1,6 +1,7 @@
 import pandas as pd
 import re
 from core.firebaseHelper import db
+from core.constants import table_products
 
 def clean_text(text):
     """Limpia el texto eliminando caracteres especiales y espacios innecesarios."""
@@ -18,7 +19,7 @@ def create_features_df():
     Retorna un DataFrame con las columnas: ['id', 'text_features'].
     """
     # Carga los datos desde Firestore
-    products_ref = db.collection("productos").stream()
+    products_ref = db.collection(table_products).stream()
     products = []
 
     for doc in products_ref:

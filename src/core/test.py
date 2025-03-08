@@ -379,11 +379,281 @@ productos = [
   }
 ]
 
+tiendas = [
+  {
+    "id": "1",
+    "name": "La Casa de la Pizza",
+    "description": "Especialistas en pizzas artesanales con ingredientes frescos.",
+    "email": "contacto@lacasadelapizza.com",
+    "image": "https://example.com/pizza.jpg",
+    "phoneNumber": "+34 678 123 456",
+    "rating": 4.8,
+    "totalRating": 1200,
+    "totalReviews": 250,
+    "userId": "user_001",
+    "paginationKey": "key_001",
+    "updatedAt": "2025-03-05T12:00:00Z",
+    "createdAt": "2022-07-12T08:30:00Z",
+    "startTime": "2025-03-05T11:00:00Z",
+    "endTime": "2025-03-05T23:00:00Z"
+  },
+  {
+    "id": "2",
+    "name": "Hamburguesas El Toro",
+    "description": "Jugosas hamburguesas con carne 100% Angus y pan artesanal.",
+    "email": "info@eltoro.com",
+    "image": "https://example.com/burger.jpg",
+    "phoneNumber": "+34 645 789 321",
+    "rating": 4.7,
+    "totalRating": 950,
+    "totalReviews": 180,
+    "userId": "user_002",
+    "paginationKey": "key_002",
+    "updatedAt": "2025-03-05T13:15:00Z",
+    "createdAt": "2021-09-20T14:45:00Z",
+    "startTime": "2025-03-05T12:00:00Z",
+    "endTime": "2025-03-05T23:30:00Z"
+  },
+  {
+    "id": "3",
+    "name": "Tacos La Esquina",
+    "description": "Auténticos tacos mexicanos con recetas tradicionales.",
+    "email": "pedidos@tacoslaesquina.com",
+    "image": "https://example.com/tacos.jpg",
+    "phoneNumber": "+34 654 321 987",
+    "rating": 4.9,
+    "totalRating": 1100,
+    "totalReviews": 275,
+    "userId": "user_003",
+    "paginationKey": "key_003",
+    "updatedAt": "2025-03-05T14:30:00Z",
+    "createdAt": "2020-05-10T09:15:00Z",
+    "startTime": "2025-03-05T10:30:00Z",
+    "endTime": "2025-03-05T22:00:00Z"
+  },
+  {
+    "id": "4",
+    "name": "Pastelería Dulce Encanto",
+    "description": "Deliciosos pasteles, tartas y postres caseros.",
+    "email": "info@dulceencanto.com",
+    "image": "https://example.com/pasteleria.jpg",
+    "phoneNumber": "+34 612 345 678",
+    "rating": 4.6,
+    "totalRating": 800,
+    "totalReviews": 150,
+    "userId": "user_004",
+    "paginationKey": "key_004",
+    "updatedAt": "2025-03-05T11:45:00Z",
+    "createdAt": "2019-03-08T07:30:00Z",
+    "startTime": "2025-03-05T08:00:00Z",
+    "endTime": "2025-03-05T20:00:00Z"
+  },
+  {
+    "id": "5",
+    "name": "Sushi Express",
+    "description": "El mejor sushi a domicilio, calidad y frescura garantizadas.",
+    "email": "reservas@sushiexpress.com",
+    "image": "https://example.com/sushi.jpg",
+    "phoneNumber": "+34 600 789 456",
+    "rating": 4.8,
+    "totalRating": 1250,
+    "totalReviews": 300,
+    "userId": "user_005",
+    "paginationKey": "key_005",
+    "updatedAt": "2025-03-05T15:10:00Z",
+    "createdAt": "2021-12-15T10:00:00Z",
+    "startTime": "2025-03-05T11:00:00Z",
+    "endTime": "2025-03-05T22:30:00Z"
+  },
+  {
+    "id": "6",
+    "name": "Café Aromático",
+    "description": "Café de especialidad con granos seleccionados.",
+    "email": "contacto@cafearomatico.com",
+    "image": "https://example.com/cafe.jpg",
+    "phoneNumber": "+34 630 123 987",
+    "rating": 4.9,
+    "totalRating": 1350,
+    "totalReviews": 400,
+    "userId": "user_006",
+    "paginationKey": "key_006",
+    "updatedAt": "2025-03-05T09:00:00Z",
+    "createdAt": "2018-10-05T08:20:00Z",
+    "startTime": "2025-03-05T07:00:00Z",
+    "endTime": "2025-03-05T19:00:00Z"
+  },
+  {
+    "id": "7",
+    "name": "Asador El Gaucho",
+    "description": "Carnes a la parrilla con el auténtico sabor argentino.",
+    "email": "reservas@elgaucho.com",
+    "image": "https://example.com/asador.jpg",
+    "phoneNumber": "+34 611 654 321",
+    "rating": 4.7,
+    "totalRating": 980,
+    "totalReviews": 220,
+    "userId": "user_007",
+    "paginationKey": "key_007",
+    "updatedAt": "2025-03-05T16:00:00Z",
+    "createdAt": "2020-02-17T11:10:00Z",
+    "startTime": "2025-03-05T12:30:00Z",
+    "endTime": "2025-03-05T23:00:00Z"
+  },
+  {
+    "id": "8",
+    "name": "Panadería La Tradición",
+    "description": "Pan recién horneado con recetas tradicionales.",
+    "email": "info@latradicion.com",
+    "image": "https://example.com/panaderia.jpg",
+    "phoneNumber": "+34 609 876 543",
+    "rating": 4.8,
+    "totalRating": 890,
+    "totalReviews": 210,
+    "userId": "user_008",
+    "paginationKey": "key_008",
+    "updatedAt": "2025-03-05T07:30:00Z",
+    "createdAt": "2017-06-01T06:45:00Z",
+    "startTime": "2025-03-05T06:00:00Z",
+    "endTime": "2025-03-05T18:00:00Z"
+  },
+  {
+    "id": "9",
+    "name": "Mariscos del Pacífico",
+    "description": "Pescados y mariscos frescos, directo del mar a tu mesa.",
+    "email": "contacto@mariscospacifico.com",
+    "image": "https://example.com/mariscos.jpg",
+    "phoneNumber": "+34 690 432 876",
+    "rating": 4.8,
+    "totalRating": 1100,
+    "totalReviews": 270,
+    "userId": "user_009",
+    "paginationKey": "key_009",
+    "updatedAt": "2025-03-05T12:45:00Z",
+    "createdAt": "2019-11-20T10:00:00Z",
+    "startTime": "2025-03-05T12:00:00Z",
+    "endTime": "2025-03-05T22:00:00Z"
+  },
+  {
+    "id": "10",
+    "name": "Veggie Delight",
+    "description": "Comida 100% vegetariana y vegana con ingredientes orgánicos.",
+    "email": "info@veggiedelight.com",
+    "image": "https://example.com/veggie.jpg",
+    "phoneNumber": "+34 677 908 345",
+    "rating": 4.9,
+    "totalRating": 1400,
+    "totalReviews": 320,
+    "userId": "user_010",
+    "paginationKey": "key_010",
+    "updatedAt": "2025-03-05T13:30:00Z",
+    "createdAt": "2020-08-15T09:30:00Z",
+    "startTime": "2025-03-05T10:00:00Z",
+    "endTime": "2025-03-05T21:00:00Z"
+  },
+  {
+    "id": "11",
+    "name": "El Rincón del Pollo",
+    "description": "Pollo asado con recetas especiales y salsas caseras.",
+    "email": "pedidos@rincondelpollo.com",
+    "image": "https://example.com/pollo.jpg",
+    "phoneNumber": "+34 622 567 890",
+    "rating": 4.7,
+    "totalRating": 980,
+    "totalReviews": 250,
+    "userId": "user_011",
+    "paginationKey": "key_011",
+    "updatedAt": "2025-03-05T14:00:00Z",
+    "createdAt": "2021-06-22T11:15:00Z",
+    "startTime": "2025-03-05T11:30:00Z",
+    "endTime": "2025-03-05T22:30:00Z"
+  },
+  {
+    "id": "12",
+    "name": "Bodega Española",
+    "description": "Tapas y vinos de las mejores regiones de España.",
+    "email": "contacto@bodegaespanola.com",
+    "image": "https://example.com/tapas.jpg",
+    "phoneNumber": "+34 633 321 654",
+    "rating": 4.8,
+    "totalRating": 1200,
+    "totalReviews": 280,
+    "userId": "user_012",
+    "paginationKey": "key_012",
+    "updatedAt": "2025-03-05T17:00:00Z",
+    "createdAt": "2018-04-10T10:45:00Z",
+    "startTime": "2025-03-05T13:00:00Z",
+    "endTime": "2025-03-05T23:30:00Z"
+  },
+  {
+    "id": "13",
+    "name": "Heladería Frescura",
+    "description": "Helados artesanales con ingredientes naturales y sabores únicos.",
+    "email": "info@heladeriafrescura.com",
+    "image": "https://example.com/helado.jpg",
+    "phoneNumber": "+34 699 876 543",
+    "rating": 4.9,
+    "totalRating": 1300,
+    "totalReviews": 330,
+    "userId": "user_013",
+    "paginationKey": "key_013",
+    "updatedAt": "2025-03-05T18:30:00Z",
+    "createdAt": "2019-09-05T12:20:00Z",
+    "startTime": "2025-03-05T10:00:00Z",
+    "endTime": "2025-03-05T22:00:00Z"
+  },
+  {
+    "id": "14",
+    "name": "Pasta Bella",
+    "description": "Auténtica comida italiana con pasta hecha a mano.",
+    "email": "reservas@pastabella.com",
+    "image": "https://example.com/pasta.jpg",
+    "phoneNumber": "+34 655 234 987",
+    "rating": 4.8,
+    "totalRating": 1150,
+    "totalReviews": 290,
+    "userId": "user_014",
+    "paginationKey": "key_014",
+    "updatedAt": "2025-03-05T19:00:00Z",
+    "createdAt": "2020-01-30T15:00:00Z",
+    "startTime": "2025-03-05T12:00:00Z",
+    "endTime": "2025-03-05T23:00:00Z"
+  },
+  {
+    "id": "15",
+    "name": "Donas & Café",
+    "description": "Donas recién hechas y café gourmet para acompañarlas.",
+    "email": "contacto@donasycafe.com",
+    "image": "https://example.com/donas.jpg",
+    "phoneNumber": "+34 611 678 234",
+    "rating": 4.7,
+    "totalRating": 950,
+    "totalReviews": 260,
+    "userId": "user_015",
+    "paginationKey": "key_015",
+    "updatedAt": "2025-03-05T20:15:00Z",
+    "createdAt": "2019-07-18T13:10:00Z",
+    "startTime": "2025-03-05T08:00:00Z",
+    "endTime": "2025-03-05T20:00:00Z"
+  }
+]
+
+
 def insertar_productos():
     for producto in productos:
-        doc_ref = db.collection('productos').document(producto['id'])
+        doc_ref = db.collection('products').document(producto['id'])
         doc_ref.set(producto)
 
 
-if __name__ == "__main__":
+def insertar_tiendas():
+    for tienda in tiendas:
+        doc_ref = db.collection('stores').document(tienda['id'])
+        doc_ref.set(tienda)
+
+
+def main():
     insertar_productos()
+    insertar_tiendas()
+
+
+if __name__ == "__main__":
+    main()

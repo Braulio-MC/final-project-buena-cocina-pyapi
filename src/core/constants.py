@@ -22,14 +22,16 @@ STORE_REVIEW_ROUTES_PAGING_BY_STORE_ID_WITH_RANGE_CACHE_EXPIRE = 60 * 5 # 5 minu
 STORE_REVIEW_ROUTES_PAGING_BY_USER_ID_WITH_RANGE_CACHE_EXPIRE = 60 * 3 # 3 minutes
 EMBEDDINGS_MODEL = "all-MiniLM-L6-v2"
 SENTENCE_TRANSFORMERS_MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2" # Modelo en español
+table_products = 'products'
+table_stores = 'stores'
 
 # Ayuda para el bot
 CATEGORY_SYNONYMS = {
     "comida rápida": ["fast food", "hamburguesas", "snacks, pizza, hotdogs, botana frituras, sanwich, lonches,"],
     "pizza": ["pizzería", "pizzas", "italiano"],
     "bebidas": ["refrescos", "jugos", "cócteles, cafe, preparados"],
-    "postres": ["dulces", "pasteles", "helados"],
-    "saludable": ['ensalda', 'jugos', 'batidos']
+    "postres": ["dulces", "pasteles", "helados", 'galletas', 'pan', 'roles'],
+    "saludable": ['ensalda', 'jugos', 'batidos', "bagget"]
 }
 
 STORE_SYNONYMS = {
@@ -37,3 +39,8 @@ STORE_SYNONYMS = {
     "Domino's": ["Dominos", "Domino"],
     "Starbucks": ["coffee shop", "café"]
 }
+
+#
+VALID_WORDS = ["pizza", "pasta", "hamburguesa", "tacos", "cafe", 'botana', "papas", "pastes", "postres" "tienes", "alguien",
+               "vender", "bebidas", "venden"]
+

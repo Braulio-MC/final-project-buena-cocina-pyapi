@@ -1,12 +1,11 @@
 import numpy as np
 from sentence_transformers import SentenceTransformer
 from core.firebaseHelper import db
-from core.synonyms import get_synonyms
-from core.constants import SENTENCE_TRANSFORMERS_MODEL_NAME, CATEGORY_SYNONYMS
+from core.constants import SENTENCE_TRANSFORMERS_MODEL_NAME, table_products, table_stores
 from nltk.stem import WordNetLemmatizer
 import faiss
 from functools import lru_cache
-from core.botCore import extract_filters, cumple_filtros, dynamic_threshold
+from core.botCore import extract_filters, cumple_filtros, dynamic_threshold, detect_preference, expand_query
 
 model = SentenceTransformer(SENTENCE_TRANSFORMERS_MODEL_NAME)
 lemmatizer = WordNetLemmatizer()
@@ -16,15 +15,42 @@ EMBEDDING_DIM = model.get_sentence_embedding_dimension()
 
 @lru_cache(maxsize=1)
 def get_faiss_index():
-    return store_embeddings_in_faiss()
+    return store_embeddings_in_faiss_products()
 
 
-def store_embeddings_in_faiss() -> tuple:
+@lru_cache(maxsize=1)
+def get_faiss_index_store():
+    return store_embeddings_in_faiss_stores()
+
+def store_embeddings_in_faiss_stores() -> tuple:
     index = faiss.IndexFlatL2(EMBEDDING_DIM)
-    product_ids = []
-    products = db.collection("productos").stream()
+    store_ids = []
     embeddings = []
 
+    # Indexar productos
+    stores = db.collection(table_stores).stream()
+    for doc in stores:
+        store = doc.to_dict()
+        product_id = doc.id
+        text = store["name"] + " " + store["description"]
+        embedding = model.encode(text).astype(np.float32)
+        embeddings.append(embedding)
+        store_ids.append(product_id)
+
+    if embeddings:
+        embeddings_array = np.array(embeddings, dtype=np.float32)
+        index.add(embeddings_array)
+
+    return index, store_ids
+
+
+def store_embeddings_in_faiss_products() -> tuple:
+    index = faiss.IndexFlatL2(EMBEDDING_DIM)
+    product_ids = []
+    embeddings = []
+
+    # Indexar productos
+    products = db.collection(table_products).stream()
     for doc in products:
         product = doc.to_dict()
         product_id = doc.id
@@ -39,25 +65,6 @@ def store_embeddings_in_faiss() -> tuple:
 
     return index, product_ids
 
-
-def expand_query(query: str):
-    """ Expande la consulta con sinónimos y luego aplica lematización.
-    """
-    words = query.lower().split()
-    expanded_query = []
-
-    for word in words:
-        expanded_query.append(word)
-
-        # Agregamos sinonimos de categoria
-        expanded_query.extend(CATEGORY_SYNONYMS.get(word, []))
-
-        # Agregar sinonimos adicionales
-        expanded_query.extend(get_synonyms(word))
-
-    lemmatized_query = [lemmatizer.lemmatize(word) for word in expanded_query]
-
-    return " ".join(set(lemmatized_query))
 
 
 # Genera embeddings en base a la pregunta para comprarlos con los embeddings de los productos
@@ -86,22 +93,39 @@ def find_similar_products(query: str, top_k: int = 3):
     for i in range(top_k):
         if indices[0][i] != -1:  # Verificar si FAISS devolvió un índice válido
             product_id = product_ids[indices[0][i]]
-            results.append((product_id, distances[0][i]))  # Guardar ID y distancia
+            similarity = 1 / (1 + distances[0][i])  # Convertir distancia en similitud
+            results.append((product_id, similarity))
 
+    # Aplicar umbral dinámico
     threshold = dynamic_threshold(query)
-    results = [(product_id, dist) for product_id, dist in results if dist >= threshold]
+    filtered_results = [pid for pid, sim in results if sim >= threshold]
 
-    # Filtrar los resultados según los filtros extraídos
-    filtered_results = [
-        (pid, dist) for pid, dist in results
-        if cumple_filtros(pid, min_price, max_price, category, store)
-    ]
-
-    # Aquí está el cambio para manejar el caso cuando no hay resultados filtrados
-    if filtered_results:
-        return [item[0] for item in filtered_results]
-    else:
-        return [item[0] for item in results]
+    return filtered_results if filtered_results else [item[0] for item in results]
 
 
+def find_stores(query: str, top_k: int = 3):
+    index, store_ids = get_faiss_index_store()
 
+
+    if index is None or index.ntotal == 0:
+        print("El índice FAISS está vacío.")
+        return []
+
+    # Generar embedding para la consulta
+    query_embedding = np.array([generate_embedding(query)], dtype=np.float32)
+
+    # Buscar en FAISS (devuelve distancias y posiciones en el índice)
+    distances, indices = index.search(query_embedding, top_k)
+
+    results = []
+    for i in range(top_k):
+        if indices[0][i] != -1:  # Verificar si FAISS devolvió un índice válido
+            store_id = store_ids[indices[0][i]]
+            similarity = 1 / (1 + distances[0][i])  # Convertir distancia en similitud
+            results.append((store_id, similarity))
+
+    # Aplicar umbral dinámico
+    threshold = dynamic_threshold(query)
+    filtered_results = [pid for pid, sim in results if sim >= threshold]
+
+    return filtered_results if filtered_results else [item[0] for item in results]

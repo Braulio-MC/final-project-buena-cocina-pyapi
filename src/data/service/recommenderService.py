@@ -1,5 +1,6 @@
 from core.recommender import Recommender
 from core.firebaseHelper import db
+from core.constants import table_products
 
 
 class RecommenderService:
@@ -14,7 +15,7 @@ class RecommenderService:
 
         recommended_products = []
         for pid in product_ids:
-            product_ref = db.collection('productos').document(pid).get()
+            product_ref = db.collection(table_products).document(pid).get()
             if product_ref.exists:
                 data = product_ref.to_dict()
 

@@ -1,5 +1,5 @@
 from domain.model.recommenderDomain import RecommenderDomain
-
+from core.constants import table_products
 
 class ProductRecommenderNetwork(RecommenderDomain):
 
@@ -10,4 +10,4 @@ class ProductRecommenderNetwork(RecommenderDomain):
         )
 
     class Meta:
-        collection_name = "products"
+        collection_name = table_products
