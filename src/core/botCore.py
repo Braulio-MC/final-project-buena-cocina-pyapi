@@ -8,11 +8,24 @@ from fuzzywuzzy import process
 
 lemmatizer = WordNetLemmatizer()
 
+
 def extract_filters(query: str):
     min_price, max_price, category, store = None, None, None, None
 
     # Buscar precios
     price_match = re.search(r"(\d+(?:\.\d{1,2})?)\s*(?:-|a|hasta|y|por menos de)?\s*(\d+(?:\.\d{1,2})?)?", query)
+
+    # Obtener nombres de tiendas desde Firestore
+    stores_docs = db.collection("stores").stream()
+    store_names = {doc.id: doc.to_dict().get("name", "").lower() for doc in stores_docs}
+
+    words = query.lower().split()
+
+    # Buscar coincidencias con nombres de tiendas
+    for store_id, store_name in store_names.items():
+        if store_name in query.lower():
+            store = store_name
+            break  # Tomar la primera coincidencia
 
     if price_match:
         min_price = float(price_match.group(1))
@@ -24,9 +37,6 @@ def extract_filters(query: str):
         if any(syn in query for syn in synonyms):
             category = category_name
 
-    for store_name, synonyms in STORE_SYNONYMS.items():
-        if any(syn in query for syn in synonyms):
-            store = store_name
 
     return min_price, max_price, category, store
 
@@ -59,7 +69,12 @@ def cumple_filtros(product_id, min_price, max_price, category, store):
 # Esto va ayudar a ser mas flexible con preguntas largas y preciso con preguntas mas directas
 def dynamic_threshold(query: str):
     words = len(query.split())
-    return max(0.2, min(0.5, 0.5 - 0.05 * words))
+    if words <= 2:
+        return 0.1
+    elif words <= 5:
+        return 0.2
+    else:
+        return 0.3
 
 
 def detect_preference(query: str):

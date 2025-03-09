@@ -100,7 +100,20 @@ def find_similar_products(query: str, top_k: int = 3):
     threshold = dynamic_threshold(query)
     filtered_results = [pid for pid, sim in results if sim >= threshold]
 
-    return filtered_results if filtered_results else [item[0] for item in results]
+
+    # Obtener productos desde Firestore por ID
+    product_docs = [db.collection(table_products).document(pid).get() for pid in filtered_results]
+    products_data = {doc.id: doc.to_dict() for doc in product_docs if doc.exists and doc.to_dict() is not None}
+
+    # Aplicar filtros de precio, categoría y tienda
+    final_results = [
+        pid for pid in filtered_results
+        if cumple_filtros(products_data.get(pid, {}), min_price, max_price, category, store)
+    ]
+
+    # Si el filtrado eliminó todos los productos, devolver los más similares sin filtrar
+    return final_results if final_results else [pid for pid, _ in results[:top_k]]
+
 
 
 def find_stores(query: str, top_k: int = 3):

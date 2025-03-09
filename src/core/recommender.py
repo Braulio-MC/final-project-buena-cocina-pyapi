@@ -25,24 +25,49 @@ class Recommender:
         else:
             print("Embeddings cargados desde Firestore correctamente.")
 
-
     def generate_and_save_embeddings(self):
         """Genera los embeddings de los productos y los guarda en Firestore."""
-        model = SentenceTransformer(SENTENCE_TRANSFORMERS_MODEL_NAME)  # Modelo para generar embeddings
-        df = create_features_df()  # Obtener los datos preprocesados
+        model = SentenceTransformer(SENTENCE_TRANSFORMERS_MODEL_NAME)
+        df = create_features_df()
+
+        # Verificar si el DataFrame tiene datos
+        if df.empty:
+            print("No hay datos disponibles para generar embeddings.")
+            return  # Terminar la función si no hay datos
 
         if 'text_features' not in df.columns:
             raise ValueError("La columna 'text_features' no se encuentra en el DataFrame.")
+
+        # Verificar si hay textos en 'text_features'
+        if df['text_features'].dropna().empty:
+            print("No hay textos válidos en la columna 'text_features'.")
+            return  # Terminar la función si no hay textos válidos
 
         # Generar embeddings
         embeddings = model.encode(df['text_features'].tolist(), show_progress_bar=True)
 
         # Guardar embeddings y product_ids en Firestore
         batch = db.batch()
+        batch_size = 0  # Controlar el tamaño del batch
+        max_batch_size = 500  # Límite de Firestore
+
         for product_id, embedding in zip(df['id'], embeddings):
+            # Comprimir a float16 para ahorrar espacio
+            compressed_embedding = np.array(embedding, dtype=np.float16).tolist()
+
             doc_ref = db.collection("embeddings").document(product_id)
-            batch.set(doc_ref, {"embedding": embedding.tolist()})  # Guardar como lista
-        batch.commit()
+            batch.set(doc_ref, {"embedding": compressed_embedding})
+            batch_size += 1
+
+            # Confirmar batch si llega al límite
+            if batch_size >= max_batch_size:
+                batch.commit()
+                batch = db.batch()
+                batch_size = 0
+
+        # Confirmar el batch final si quedó algo pendiente
+        if batch_size > 0:
+            batch.commit()
 
         print("Embeddings generados y guardados en Firestore correctamente.")
 
