@@ -20,27 +20,80 @@ PRODUCT_REVIEW_ROUTES_PAGING_BY_USER_ID_WITH_RANGE_CACHE_EXPIRE = 60 * 3 # 3 min
 STORE_REVIEW_ROUTES_GET_ALL_CACHE_EXPIRE = 60 * 10 # 10 minutes
 STORE_REVIEW_ROUTES_PAGING_BY_STORE_ID_WITH_RANGE_CACHE_EXPIRE = 60 * 5 # 5 minutes
 STORE_REVIEW_ROUTES_PAGING_BY_USER_ID_WITH_RANGE_CACHE_EXPIRE = 60 * 3 # 3 minutes
-EMBEDDINGS_MODEL = "all-MiniLM-L6-v2"
+EMBEDDINGS_MODEL = "intfloat/multilingual-e5-large"
 SENTENCE_TRANSFORMERS_MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2" # Modelo en español
 table_products = 'products'
 table_stores = 'stores'
 
 # Ayuda para el bot
 CATEGORY_SYNONYMS = {
-    "comida rápida": ["fast food", "hamburguesas", "snacks, pizza, hotdogs, botana frituras, sanwich, lonches,"],
+    "italiana": ["pizza", "pasta", "spaghetti", "lasagna"],
+    "mexicana": ["tacos", "burros", "quesadillas", "nachos"],
+    "china": ["rollitos", "arroz", "pollo", "dim sum"],
+    "argentina": ["asado", "empanadas", "choripán", "parrilla"],
+    "internacional": ["francesa", "europea"],
+    "comida rápida": ["fast food", "hamburguesas", "snacks", "hotdogs", "sandwich", "lonches", "pizza"],
     "pizza": ["pizzería", "pizzas", "italiano"],
-    "bebidas": ["refrescos", "jugos", "cócteles, cafe, preparados"],
-    "postres": ["dulces", "pasteles", "helados", 'galletas', 'pan', 'roles'],
-    "saludable": ['ensalda', 'jugos', 'batidos', "bagget"]
+    "bebidas": ["refrescos", "jugos", "cócteles", "cafe", "preparados"],
+    "postres": ["dulces", "pasteles", "helados", "galletas", "pan", "roles"],
+    "saludable": ["ensalada", "jugos", "batidos", "baguette", "vegetariano"]
 }
 
-STORE_SYNONYMS = {
-    "McDonald's": ["McD", "Mc Donalds", "McDonalds"],
-    "Domino's": ["Dominos", "Domino"],
-    "Starbucks": ["coffee shop", "café"]
-}
 
-#
+# Ayuda para correguir palabras
 VALID_WORDS = ["pizza", "pasta", "hamburguesa", "tacos", "cafe", 'botana', "papas", "pastes", "postres" "tienes", "alguien",
-               "vender", "bebidas", "venden"]
+               "vender", "bebidas", "venden", "sandwiches", 'baggete', 'sopa', 'ramen', 'bebidas', 'quien']
 
+VALID_WORDS_ABOUT_QUESTIONS = ['este momento', 'ahora', 'ahorita', 'hoy' 'esta hora']
+
+CATEGORY_DESCRIPTIONS = {
+    "italiana": "pizza, pasta, comida de Italia, lasaña, risotto",
+    "mexicana": "tacos, burritos, comida mexicana, enchiladas, quesadillas",
+    "china": "comida china, arroz frito, dumplings, rollitos primavera",
+    "comida rápida": "fast food, hamburguesas, hot dogs, papas fritas pizza",
+    "saludable": "ensaladas, batidos, comida saludable, jugos naturales bajo en calorias",
+    "postres": "pasteles, helados, dulces, panadería, chocolates",
+    "argentina": "asado, empanadas, choripán, milanesa, bife de chorizo, parrilla, matambre, chimichurri, comida argentina",
+    "internacional": "comida francesa, sushi, hamburguesas, platillos internacionales",
+}
+
+
+open_now_examples = [
+    "¿Quién está abierto ahora?",
+    "¿Qué tiendas están abiertas ahorita?",
+    "¿Dónde puedo comprar algo en este momento?",
+    "¿Qué lugares están disponibles ahora?",
+    "¿Puedo ir a una tienda ahorita?",
+]
+
+opening_hours_examples = [
+    "¿A qué hora abre la tienda?",
+    "¿Hasta qué hora están abiertos?",
+    "¿Cuál es el horario de atención?",
+    "¿Cuándo cierra este negocio?",
+    "¿A qué hora puedo ir?",
+]
+
+# Ejemplos de consultas sobre tiendas
+store_examples = [
+    "¿Dónde puedo encontrar una tienda?",
+    "Quiero saber qué tiendas están abiertas",
+    "¿Dónde hay un restaurante?",
+    "¿Cuáles son los horarios de los negocios?",
+    "A qué hora cierra la cafetería",
+    "Quisiera conocer los restaurantes disponibles",
+    "¿Qué tiendas están abiertas ahora?",
+    "¿Cuáles son los lugares para comer?"
+]
+
+# Ejemplos de consultas sobre productos
+product_examples = [
+    "Quiero una hamburguesa",
+    "¿Tienen pizza disponible?",
+    "Quisiera pedir un café",
+    "Dime qué postres tienes",
+    "Estoy buscando bebidas frías",
+    "Me gustaría un platillo mexicano",
+    "¿Qué comida tienen?",
+    "¿Tienen alguna bebida especial?"
+]

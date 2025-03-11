@@ -1,9 +1,5 @@
-from data.service.productBotService import get_all_products
 from core.firebaseHelper import db
 from core.constants import table_products
-
-def fetch_products():
-    return get_all_products()
 
 
 def get_products_by_ids(product_ids: list):

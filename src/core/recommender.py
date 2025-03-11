@@ -1,10 +1,11 @@
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
-from core.constants import  SENTENCE_TRANSFORMERS_MODEL_NAME
+from core.constants import  SENTENCE_TRANSFORMERS_MODEL_NAME, EMBEDDINGS_MODEL
 from core.dataPreprocessing import create_features_df
 from sentence_transformers import SentenceTransformer
 from core.firebaseHelper import db
 
+model = SentenceTransformer(EMBEDDINGS_MODEL)
 
 class Recommender:
     def __init__(self):
@@ -27,7 +28,7 @@ class Recommender:
 
     def generate_and_save_embeddings(self):
         """Genera los embeddings de los productos y los guarda en Firestore."""
-        model = SentenceTransformer(SENTENCE_TRANSFORMERS_MODEL_NAME)
+
         df = create_features_df()
 
         # Verificar si el DataFrame tiene datos
