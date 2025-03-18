@@ -1,3 +1,4 @@
+
 import re
 from core.constants import CATEGORY_SYNONYMS, VALID_WORDS
 from core.firebaseHelper import db
@@ -33,7 +34,7 @@ def normalize_text(text):
 
 
 def detect_category(query):
-    """Detecta la categoría más relevante, considerando sinónimos y embeddings."""
+    """Detecta la categoría más relevante utilizando embeddings, con un umbral más estricto."""
 
     query_embedding = model.encode(query, normalize_embeddings=True)
 
@@ -52,16 +53,18 @@ def detect_category(query):
     best_category = max(similarities, key=similarities.get)
     best_similarity = similarities[best_category]
 
-    # Ajustar umbral dinámico
+    # Ajustar umbral dinámico más estricto
     avg_similarity = np.mean(list(similarities.values()))
     std_similarity = np.std(list(similarities.values()))
-    dynamic_threshold = avg_similarity + (0.5 * std_similarity)
 
-    print(f" Similitudes: {similarities}")
-    print(f" Mejor categoría: {best_category} (Similitud: {best_similarity})")
-    print(f" Umbral dinámico: {dynamic_threshold}")
+    # Se exige que la mejor similitud supere el promedio + desviación estándar completa
+    strict_threshold = avg_similarity + std_similarity
 
-    return best_category if best_similarity > dynamic_threshold else None
+    print(f"Similitudes: {similarities}")
+    print(f"Mejor categoría: {best_category} (Similitud: {best_similarity:.4f})")
+    print(f"Umbral estricto: {strict_threshold:.4f}")
+
+    return best_category if best_similarity > strict_threshold else None
 
 
 def extract_filters(query: str):
@@ -140,12 +143,20 @@ def dynamic_threshold(query: str):
 
 
 def detect_preference(query: str):
-    if "barato" in query or "más barato" or "por menos" or "barata" or "economica" in query:
+    query = query.lower()  # Convertir a minúsculas para evitar problemas con mayúsculas
+
+    # Orden por precio (ascendente o descendente)
+    if any(word in query for word in ["barato", "más barato", "por menos", "barata", "económica"]):
         return "price", "asc"
-    if "caro" in query or "más caro" in query:
+    if any(word in query for word in ["caro", "más caro"]):
         return "price", "desc"
-    if "mejor calificado" in query or "mejor valorado" in query:
+
+    # Orden por calificación (ascendente o descendente)
+    if "peor" in query:
+        return "rating", "asc"
+    if any(word in query for word in ["mejor", "mejor calificado", "mejor valorado"]):
         return "rating", "desc"
+
     return None, None
 
 
@@ -220,22 +231,34 @@ def isOpenNow(store_data):
 
 
 def detect_store_availability_query(query: str):
-    """Clasifica la consulta en 'open_now', 'opening_hours' o None usando embeddings."""
+    """Clasifica la consulta en 'open_now', 'opening_hours' o None con mayor precisión usando embeddings."""
     query_embedding = model.encode(query, normalize_embeddings=True)
 
     # Calculamos la similitud con cada categoría
     open_now_similarities = np.dot(open_now_embeddings, query_embedding)
     opening_hours_similarities = np.dot(opening_hours_embeddings, query_embedding)
 
-    # Encontramos la mejor similitud para cada categoría
+    # Mejor similitud por categoría
     best_open_now_sim = max(open_now_similarities)
     best_opening_hours_sim = max(opening_hours_similarities)
 
-    # Ajustamos umbrales de confianza
-    threshold = 0.65
-    if best_open_now_sim > threshold and best_open_now_sim > best_opening_hours_sim:
+    # Cálculo de umbral dinámico
+    all_similarities = np.concatenate([open_now_similarities, opening_hours_similarities])
+    avg_similarity = np.mean(all_similarities)
+    std_similarity = np.std(all_similarities)
+    dynamic_threshold = avg_similarity + (0.3 * std_similarity)  # Menos estricto
+
+    # Ajuste del margen de diferencia
+    min_confidence_gap = 0.02  # Bajamos la diferencia mínima requerida
+
+    print(f"🔹 Similitud Open Now: {best_open_now_sim}")
+    print(f"🔹 Similitud Opening Hours: {best_opening_hours_sim}")
+    print(f"🔹 Umbral dinámico: {dynamic_threshold}")
+
+    if best_open_now_sim > dynamic_threshold and best_open_now_sim > (best_opening_hours_sim + min_confidence_gap):
         return "open_now"
-    elif best_opening_hours_sim > threshold:
+    elif best_opening_hours_sim > dynamic_threshold and best_opening_hours_sim > (best_open_now_sim + min_confidence_gap):
         return "opening_hours"
 
     return None
+

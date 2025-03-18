@@ -10,10 +10,12 @@ router = APIRouter()
 async def get_recommendations(query: str):
     if detect_query_type(query) == 'store':
         store_response = find_stores(query)
-
-        print(type(store_response))
         if isinstance(store_response, list):
-            return get_stores_by_ids(store_response)
+            results = get_stores_by_ids(store_response)
+            sort_field, sort_order = detect_preference(query)
+            if sort_field:
+                results.sort(key=lambda x: x[sort_field], reverse=(sort_order == "desc"))
+            return results
         elif isinstance(store_response, str):
             return {"message": store_response}
         elif isinstance(store_response, dict):
@@ -21,13 +23,16 @@ async def get_recommendations(query: str):
         else:
             return {"error": "No se encontraron resultados para tu consulta."}
     else:
-        product_ids = find_similar_products(query)
-        results = get_products_by_ids(product_ids)
-        sort_field, sort_order = detect_preference(query)
+        product_response = find_similar_products(query)
 
-        if sort_field:
-            results.sort(key=lambda x: x[sort_field], reverse=(sort_order == "desc"))
+        if isinstance(product_response, list):
+            results = get_products_by_ids(product_response)
+            sort_field, sort_order = detect_preference(query)
+            if sort_field:
+                results.sort(key=lambda x: x[sort_field], reverse=(sort_order == "desc"))
 
-        return results  # Ahora siempre retorna resultados
+            return results  # Ahora siempre retorna resultados
+        else:
+            return {"error": "No se encontraron resultados para tu consulta."}
 
 
