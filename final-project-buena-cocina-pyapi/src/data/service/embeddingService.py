@@ -18,10 +18,12 @@ def find_products(q: str, top_k: int = 10):
 
     # Extraer filtros de la pregunta (que le interesa saber al cliente)
     min_price, max_price, category = extract_filters_from_query(query)
+    print(min_price, max_price )
+
 
     # En base a los filtros obtner los ids
     filtered_ids = filter_products(products_data, min_price, max_price, category)
-    print(category)
+    print(filtered_ids)
 
     # Realizar la búsqueda por descripción utilizando FAISS si es necesario
     description_results = search_by_description_fallback(query, products_data)
@@ -41,7 +43,7 @@ def find_products(q: str, top_k: int = 10):
         result.sort(key=lambda p: p["price"], reverse=True)
 
     if not result:
-        return "unknown"
+        return get_confused_message()
 
     return result[:top_k]
 

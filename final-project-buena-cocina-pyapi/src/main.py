@@ -12,7 +12,8 @@ from routes.storeReviewRoutes import router as store_review_router
 from routes.productReviewRoutes import router as product_review_router
 from routes.insightRoutes import router as insight_router
 from core.firebaseHelper import db
-from routes.recommendationsRoutes import router as recommendation_product_router
+from routes.recommendationsRoutes import router as recommenderRouter
+from routes.recommendationsStoreRoutes import router as recommenderStoreRouter
 from routes.botRoutes import api_router as bot_query
 from data.service.indexing import refresh_faiss_index_products, refresh_faiss_index_stores
 from  data.service.refreshIndex import periodic_faiss_refresh
@@ -40,7 +41,7 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         print(f"Error al generar índice FAISS de productos: {e}")
 
     # Tarea de refresco periódico
-    asyncio.create_task(periodic_faiss_refresh(interval_seconds=3600))  # cada hora
+    asyncio.create_task(periodic_faiss_refresh(interval_seconds=1800))  # cada media hora se actualiza
 
     yield  # Continúa ejecutando FastAPI sin bloquear por Redis
 
@@ -51,5 +52,6 @@ app = FastAPI(lifespan=lifespan)
 app.include_router(store_review_router, tags=["store_reviews"])
 app.include_router(product_review_router, tags=["product_reviews"])
 app.include_router(insight_router, tags=["insights"])
-app.include_router(recommendation_product_router, tags=["product_recommendation"])
+app.include_router(recommenderRouter, tags=["recommender"])
+app.include_router(recommenderStoreRouter, tags=["recommenderTiendas"])
 app.include_router(bot_query, tags=['ask'])

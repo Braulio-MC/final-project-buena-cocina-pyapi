@@ -108,6 +108,34 @@ def detect_categories(query: str) -> list[str]:
     return list(detected)
 
 
+# Rangos de precio
+def extract_price_range(query: str):
+    print('rango')
+
+    # 1. Detectar expresiones como "entre 100 y 150" (con o sin pesos)
+    match = re.search(r'entre\s+\$?(\d+(?:\.\d{1,2})?)\s+(?:y|a)\s+\$?(\d+(?:\.\d{1,2})?)\s*(?:pesos)?', query)
+    if match:
+        print(1)
+        return float(match.group(1)), float(match.group(2))
+
+    # 2. Detectar expresiones como "de 100 a 200"
+    match = re.search(r'de\s+\$?(\d+(?:\.\d{1,2})?)\s+(?:a|y)\s+\$?(\d+(?:\.\d{1,2})?)\s*(?:pesos)?', query)
+    if match:
+        return float(match.group(1)), float(match.group(2))
+
+    # 3. Detectar expresiones como "más de 100 y menos de 200"
+    match = re.search(r'más\s+de\s+\$?(\d+(?:\.\d{1,2})?).*?menos\s+de\s+\$?(\d+(?:\.\d{1,2})?)\s*(?:pesos)?', query)
+    if match:
+        return float(match.group(1)), float(match.group(2))
+
+    # 4. Detectar expresiones como "$100 a $200" o "100 - 200"
+    match = re.search(r'\$?(\d+(?:\.\d{1,2})?)\s*(?:-|a|–|—)\s*\$?(\d+(?:\.\d{1,2})?)\s*(?:pesos)?', query)
+    if match:
+        return float(match.group(1)), float(match.group(2))
+
+    # No se detectó un rango
+    return None, None
+
 # Mejor y pulir la consulta
 def find_closest_word(query: str, index, valid_words):
     query_embedding = model.encode([query])
@@ -149,6 +177,7 @@ def generate_embedding_simple(text: str):
     return np.array(embedding, dtype=np.float32)
 
 
+# Mensajes del bot
 def get_no_results_message():
 
     """
@@ -174,5 +203,28 @@ def no_open_stores_message():
         "🚪 No encontramos tiendas abiertas en este momento. ¡Pero no te preocupes, pronto volverán a abrir sus puertas!",
         "🍵 Todo en pausa… ¡es hora del té! Las tiendas abrirán en breve.",
         "😴 Las tiendas están durmiendo. Mientras tanto, ¿por qué no piensas en tu próximo antojo?"
+    ]
+    return random.choice(messages)
+
+
+def get_confused_message():
+    messages = [
+        "¡Ups! Creo que mi paladar virtual no reconoció eso 🤔. ¿Puedes decirlo de otra forma?",
+        "Hmm... eso no está en mi menú mental 🍴. ¿Quizás quisiste decir otra cosa?",
+        "¡Ay caramba! Mi recetario se quedó en blanco con eso 😵‍💫. ¿Me lo repites con otras palabras?",
+        "Esa especialidad no la tengo en la carta... por ahora 😅. ¿Quieres intentar con otra categoría?",
+        "¡Error de cocinero! No entendí bien tu antojo 👨‍🍳. ¿Puedes aclararlo un poquito más?",
+        "Mi radar gastronómico está confundido 😵. ¿Podrías reformular tu pregunta?",
+        "Hmm... ¿me hablaste en otro idioma culinario? 🍜 Intenta preguntarme de otra forma 😉"
+    ]
+    return random.choice(messages)
+
+def nosense_response():
+    messages = [
+        "Mmm... no entendí muy bien eso 🤔 ¿comida de qué tipo estás buscando?",
+        "¡Eso suena interesante, pero no lo tengo en el menú! 😅",
+        "¿Armas de fuego? Creo que te equivocaste de restaurante 🔫🚫🍔",
+        "Estoy entrenado para encontrar comida, no para entrar en acción 😂",
+        "No entendí la pregunta. ¿Podrías decirlo de otra forma más sabrosa? 😋",
     ]
     return random.choice(messages)

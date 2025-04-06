@@ -185,34 +185,35 @@ def type_question_about_store(query: str):
 
 def filter_products(products_data: dict, min_price: float | None, max_price: float | None, categories: list[str] | None) -> list[str]:
     filtered_ids = []
+    print(min_price, max_price)
 
     for product_id, product in products_data.items():
         price = product.get("price")
-        product_categories = product.get("category", [])  # Puede ser lista o string
-        if isinstance(product_categories, str):
-            product_categories = [product_categories]  # Asegurar lista
+        passes_price = True  # Por defecto pasa, a menos que se aplique un filtro
 
         # Filtrado por precio
-        passes_price = False
-        if min_price is not None and price is not None and price <= min_price:
-            passes_price = True
-        if max_price is not None and price is not None and price >= max_price:
-            passes_price = True
+        if price is not None:
+            if min_price is not None and max_price is not None:
+                passes_price = min_price <= price <= max_price
+            elif min_price is not None:
+                passes_price = price <= min_price
+            elif max_price is not None:
+                passes_price = price >= max_price
 
         # Filtrado por categoría
-        product_category_matches = False
+        product_category_matches = True  # Por defecto pasa, a menos que se aplique un filtro
+
         if categories:
-            categories = [cat.lower() for cat in categories]
-            for product_category in product_categories:
-                for cat in categories:
-                    if cat in product_category.lower():
-                        product_category_matches = True
-                        break
-                if product_category_matches:
+            categories = [cat.strip().lower() for cat in categories]
+            product_categories = product.get("category", [])
+            product_category_matches = False
+            for prod_cat in product_categories:
+                if any(cat in prod_cat.lower() for cat in categories):
+                    product_category_matches = True
                     break
 
-        # Incluir si pasa al menos un filtro
-        if passes_price or product_category_matches:
+        # Incluir solo si pasa ambos filtros
+        if passes_price and product_category_matches:
             filtered_ids.append(product_id)
 
     return filtered_ids
@@ -234,29 +235,26 @@ def sort_by_filter(min_price: float | None, max_price: float | None) -> str | No
 
 
 def detect_price(query: str):
-    query = query.lower()
 
-    # Buscar expresiones del tipo "entre 50 y 100"
-    match = re.search(r'entre\s+(\d+(?:\.\d{1,2})?)\s+(?:y|a)\s+(\d+(?:\.\d{1,2})?)', query)
+    # 1. Buscar rango como "entre 50 y 100"
+    min_price, max_price = extract_price_range(query)
+    if min_price is not None and max_price is not None:
+        return min_price, max_price
+
+    # 2. "más de X" → max_price = X
+    match = re.search(r'(más de|mas de|desde|por más de|por mas de)\s+\$?(\d+(?:\.\d{1,2})?)', query)
     if match:
-        return float(match.group(1)), float(match.group(2))
+        return None, float(match.group(2))
 
-    # Buscar expresiones como "menos de 100" o "hasta 100"
-    match = re.search(r'(menos de|hasta|por menos de)\s+(\d+(?:\.\d{1,2})?)', query)
+    # 3. "menos de X" → min_price = X
+    match = re.search(r'(menos de|hasta|por menos de)\s+\$?(\d+(?:\.\d{1,2})?)', query)
     if match:
-        # Aquí, "menos de" o "hasta" implica un filtro de precio mínimo (ej: "comida menos de 100")
-        return float(match.group(2)), None  # El precio mínimo es el número mencionado
+        return float(match.group(2)), None
 
-    # Buscar expresiones como "más de 100" o "desde 100"
-    match = re.search(r'(más de|desde|por más de)\s+(\d+(?:\.\d{1,2})?)', query)
-    if match:
-        return float(match.group(2)), None  # El precio mínimo es el número mencionado
-
-    # Buscar un solo número (ej: "tienes comida por 100 pesos")
+    # 4. Número suelto → interpretado como max_price
     match = re.search(r'\b(\d+(?:\.\d{1,2})?)\b', query)
     if match:
-        value = float(match.group(1))
-        return 0, value  # Interpretar como precio máximo
+        return None, float(match.group(1))
 
     return None, None
 
@@ -282,10 +280,10 @@ def detect_query_type(query: str):
     best_store_sim = max(store_similarities)
 
     # Ajustar umbral de confianza (puedes ajustarlo según tus pruebas)
-    threshold = 0.6
+    threshold = 0.3
     if best_product_sim > threshold and best_product_sim > best_store_sim:
         return "product"  # La consulta es sobre productos
     elif best_store_sim > threshold:
         return "store"  # La consulta es sobre tiendas
 
-    return "unknown"  # Si no se puede clasificar
+    return nosense_response()  # Si no se puede clasificar

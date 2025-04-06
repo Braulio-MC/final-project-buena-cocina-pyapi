@@ -21,6 +21,7 @@ PRODUCT_REVIEW_ROUTES_PAGING_BY_USER_ID_WITH_RANGE_CACHE_EXPIRE = 60 * 3 # 3 min
 STORE_REVIEW_ROUTES_GET_ALL_CACHE_EXPIRE = 60 * 10 # 10 minutes
 STORE_REVIEW_ROUTES_PAGING_BY_STORE_ID_WITH_RANGE_CACHE_EXPIRE = 60 * 5 # 5 minutes
 STORE_REVIEW_ROUTES_PAGING_BY_USER_ID_WITH_RANGE_CACHE_EXPIRE = 60 * 3 # 3 minutes
+MAX_DISTANCE = 0.5  # mientras más bajo, más exigente
 
 EMBEDDINGS_MODEL = "intfloat/multilingual-e5-large"
 SENTENCE_TRANSFORMERS_MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2" # Modelo en español
@@ -137,6 +138,8 @@ product_examples = [
     "¿Qué comida tienen?",
     "¿Tienen alguna bebida especial?",
     "¿productos por menos de?",
-    '¿Productos baratos??'
+    '¿Productos baratos?',
+    'tienes comida entre 100 y 150 pesos?',
+    '¿Comida por mas de?'
 ]
 

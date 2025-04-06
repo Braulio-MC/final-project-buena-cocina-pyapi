@@ -1,19 +1,11 @@
-from fastapi import Depends
-from typing import Annotated
-from domain.repository.recommenderRepository import RecommenderRespository
+from fastapi import APIRouter
+from data.service.productService import get_similar_product_recommendations
 
-class RecommenderController:
-    def __init__(self, repository: Annotated[RecommenderRespository, Depends()]):
-        self.repository = repository
 
-    async def get_recommendations(
-            self,
-            product_id: str,
-            top_n: int = 5
-    ):
-        # Limpiar el ID eliminando espacios y caracteres especiales
-        product_id = product_id.strip()
+router = APIRouter()
 
-        return await self.repository.get_recommendations(
-            product_id, top_n)
+@router.get("/products/{product_id}/similar")
+def similar_products(product_id: str):
+    return get_similar_product_recommendations(product_id)
+
 
