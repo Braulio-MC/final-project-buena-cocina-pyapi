@@ -37,6 +37,7 @@ product_examples = [
     "Top 5 mejores comidas",
     "Top 10 comida mas rica",
     "Top 5 comida mas deliciosa",
+    "Quiubo?"
 ]
 recommendation_examples = [
     "¿Qué tiendas me sugieres?",
