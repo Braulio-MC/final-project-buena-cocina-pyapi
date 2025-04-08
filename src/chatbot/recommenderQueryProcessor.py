@@ -7,8 +7,9 @@ import data.service.questionsEmbeddingsService as questionsEmbeddings
 from data.service.featuresIndexingService import generate_embedding_simple
 from chatbot.responses import recommendation_confused_messages
 
-class RecommenderQueryPriocessor:
+class RecommenderQueryProcessor:
     def __init__(self, query, product_ids: list, store_ids: list, products_data: dict, store_data: dict):
+
         self.query = query
         self.__STORE_RECOMMENDER_QUESTIONS = questionsEmbeddings.STORE_RECOMMENDER_QUESTIONS
         self.__PRODUCT_RECOMMENDER_QUESTIONS = questionsEmbeddings.PRODUCT_RECOMMENDER_QUESTIONS
@@ -58,37 +59,30 @@ class RecommenderQueryPriocessor:
             return int(match.group(1))
         return None
 
+    def __get_recommendation_type(self, threshold: float = 0.35) -> str:
+        if self.__STORE_RECOMMENDER_QUESTIONS.shape[0] == 0 or self.__PRODUCT_RECOMMENDER_QUESTIONS.shape[0] == 0:
+            return "unknown"
 
-    def __get_recommendation_type(self, threshold: float = 0.60) -> str:
-        """
-        Clasifica si una pregunta es sobre recomendación de tienda o de producto.
+        embedding = generate_embedding_simple(self.query).astype("float32")
 
-        Args:
-            threshold (float): Umbral de similitud mínima.
-
-        Returns:
-            str: 'store', 'product' o 'unknown'
-        """
-        embedding = generate_embedding_simple(self.query)
-
-        # Buscar la pregunta más similar en STORE_RECOMMENDER_QUESTIONS
         store_index = faiss.IndexFlatIP(m.model.get_sentence_embedding_dimension())
         store_index.add(self.__STORE_RECOMMENDER_QUESTIONS)
         _, store_sim = store_index.search(np.array([embedding]), 1)
 
-        # Buscar la pregunta más similar en PRODUCT_RECOMMENDER_QUESTIONS
         product_index = faiss.IndexFlatIP(m.model.get_sentence_embedding_dimension())
         product_index.add(self.__PRODUCT_RECOMMENDER_QUESTIONS)
         _, product_sim = product_index.search(np.array([embedding]), 1)
 
-        # Obtener los valores de similitud
         store_score = float(store_sim[0][0])
         product_score = float(product_sim[0][0])
 
-        # Comparar
+        print(f"[QUERY] {self.query}")
+        print(f"[SIM] Store: {store_score:.4f} | Product: {product_score:.4f}")
+
         if max(store_score, product_score) < threshold:
             return "unknown"
         return "store" if store_score > product_score else "product"
+
 
     def find_recommendations(self):
         recommendation_type = self.__get_recommendation_type()

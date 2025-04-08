@@ -111,23 +111,31 @@ class ProductQueryProcessor:
         return sorted_ids[:quantity]
 
     def __detect_rating(self) -> tuple[str | None, int | None]:
+        # Buscar patrones como "top 5", "5 mejores", "mejores 5", etc.
+        patterns = [
+            r'(?:top|mejores?|excelentes|recomendados)\s+(\d+)',
+            r'(\d+)\s+(?:top|mejores?|excelentes|recomendados)',
+            r'(?:top|peores?|malos|malas|horribles|terribles)\s+(\d+)',
+            r'(\d+)\s+(?:top|peores?|malos|malas|horribles|terribles)'
+        ]
+        for pattern in patterns:
+            match = re.search(pattern, self.query)
+            if match:
+                cantidad = int(match.group(1))
+                if "peor" in pattern or "mal" in pattern or "horrible" in pattern or "terrible" in pattern:
+                    return "peor", cantidad
+                return "mejor", cantidad
 
-        # Detectar si quiere los mejores productos
+        # Caso clásico: detectar solo las palabras clave y un número suelto
         if re.search(r'\b(mejor(es)?|top|buenos|excelentes|recomendados)\b', self.query):
             match = re.search(r'\b(\d+)\b', self.query)
             cantidad = int(match.group(1)) if match else 3
             return "mejor", cantidad
 
-        # Detectar si quiere los peores productos
         if re.search(r'\b(peor(es)?|malos|malas|horribles|terribles)\b', self.query):
             match = re.search(r'\b(\d+)\b', self.query)
             cantidad = int(match.group(1)) if match else 3
             return "peor", cantidad
-
-        # Si no encuentra palabras clave pero hay un número suelto, lo asume como cantidad de mejores
-        match = re.search(r'\b(\d+)\b', self.query)
-        if match:
-            return "mejor", int(match.group(1))
 
         return None, None
 
@@ -226,9 +234,10 @@ class ProductQueryProcessor:
         min_price, max_price, category, quality, quantity = self.__extract_filters_from_query()
 
         # Checa que si en caso que el usuario pida una catidad de productos a ver no sea demasiada exagerada
-        reting_check = self.__check_quantity_limits(quantity)
-        if reting_check:
-            return reting_check
+        if quantity and quality:
+            reting_check = self.__check_quantity_limits(quantity)
+            if reting_check:
+                return reting_check
 
         # Verificar si todos los filtros están vacíos de ser el caso la pregunta debe de tener algo mal
         if not any([min_price, max_price, category, quality, quantity]):

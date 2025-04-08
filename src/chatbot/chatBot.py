@@ -8,7 +8,7 @@ import unicodedata
 import re
 from  chatbot.productQueryProcessor import ProductQueryProcessor
 from chatbot.storeQueryProcessor import StoreQueryProccesor
-from chatbot.recommenderQueryProcessor import RecommenderQueryPriocessor
+from chatbot.recommenderQueryProcessor import RecommenderQueryProcessor
 
 
 class ChatBot:
@@ -79,7 +79,7 @@ class ChatBot:
             queryStores = StoreQueryProccesor(query, self.__STORE_INDEX, self.__STORE_IDS, self.__STORES_DATA)
             return queryStores.find_stores()
         elif best_recomm_sim > threshold and best_recomm_sim > max(best_product_sim, best_store_sim, best_greet_sim):
-            queryRecommendations = RecommenderQueryPriocessor(query, self.__PRODUCT_IDS, self.__STORE_IDS, self.__PRODUCTS_DATA, self.__STORES_DATA)
+            queryRecommendations = RecommenderQueryProcessor(query, self.__PRODUCT_IDS, self.__STORE_IDS, self.__PRODUCTS_DATA, self.__STORES_DATA)
             return queryRecommendations.find_recommendations()
         elif best_greet_sim > threshold and best_greet_sim > max(best_product_sim, best_store_sim, best_recomm_sim):
             return {"type": "message",

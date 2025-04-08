@@ -34,6 +34,9 @@ product_examples = [
     "¿Cuál es el top 5 de los productos más vendidos?"
     "¿Cuál es el producto más popular?",
     "¿Qué bebida es la más recomendada?"
+    "Top 5 mejores comidas",
+    "Top 10 comida mas rica",
+    "Top 5 comida mas deliciosa",
 ]
 recommendation_examples = [
     "¿Qué tiendas me sugieres?",
@@ -43,6 +46,7 @@ recommendation_examples = [
     "¿Qué me recomiendas para comer?",
     "¿Qué comida está buena?",
     "Recomiéndame algo rico",
+    "¿Que comida me recomiendas?"
     "¿Qué platillo debería probar?"
 ]
 greeting_examples = [
@@ -96,15 +100,37 @@ questions_about_description = [
 
 """ Recomendacion de productos y tiendas """
 store_recommender_examples = [
-    "¿Qué tiendas me sugieres?",
-    "¿Algún vendedor que me recomiendes?",
-    "¿Conoces alguna tienda buena?",
-    "¿Qué negocio me recomiendas?"
+     "¿Qué tiendas me recomiendas?",
+    "Quiero ir a un restaurante",
+    "Muéstrame locales buenos",
+    "¿Dónde puedo ir a comer?",
+    "Algún lugar cerca para comer",
+    "Tiendas con comida rica",
+    "Recomiéndame lugares para almorzar",
+    "¿Qué restaurantes hay disponibles?",
+    "¿Qué lugares tienes para cenar?",
+    "Estoy buscando una tienda para comprar comida"
 ]
 
 product_recommender_examples = [
-    "¿Qué me recomiendas para comer?",
-    "¿Qué comida está buena?",
-    "Recomiéndame algo rico",
-    "¿Qué platillo debería probar?"
+       "¿Qué productos me recomiendas?",
+    "¿Qué cosas ricas tienen?",
+    "Estoy buscando algo para comer",
+    "Se me antoja algo dulce",
+    "Dame algo salado",
+    "Quiero comer pizza o hamburguesa",
+    "¿Qué me puedo comprar para almorzar?",
+    "Dame sugerencias de comida",
+    "Tengo hambre, ¿qué hay?",
+    "Algo para picar porfa",
+    "¿Qué platillos me ofreces?",
+    "Estoy entre sushi o tacos",
+    "¿Qué puedo ordenar?",
+    "¿Qué opciones de comida tienen?",
+    "Dame algo sabroso",
+    "Quiero algo diferente hoy",
+    "Quiero probar algo nuevo",
+    "Muéstrame los mejores platillos",
+    "Lo más vendido porfa",
+    "Algo ligero para comer"
 ]
