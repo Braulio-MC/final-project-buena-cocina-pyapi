@@ -46,6 +46,20 @@ def insight_routes_get_top_sold_products_key_builder(
     hashed_key = hashlib.md5(raw_key.encode()).hexdigest() # avoid redis key length limit
     return f'{REDIS_CACHE_PREFIX}:{hashed_key}'
 
+def insight_routes_get_top_rated_stores_key_builder(
+    func,
+    namespace: str = "",
+    request: Request = None,
+    response: Response = None,
+    *args,
+    **kwargs
+):
+    start = request.query_params.get('start') if 'start' in request.query_params else "4"
+    end = request.query_params.get('end') if 'end' in request.query_params else "5"
+    raw_key = f'insight-routes:get-top-rated_stores:{start}:{end}'
+    hashed_key = hashlib.md5(raw_key.encode()).hexdigest() # avoid redis key length limit
+    return f'{REDIS_CACHE_PREFIX}:{hashed_key}'
+
 def product_review_routes_get_all_key_builder(
     func,
     namespace: str = "",

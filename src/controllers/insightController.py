@@ -3,6 +3,7 @@ from datetime import datetime
 from fastapi.params import Depends
 from domain.model.insightCalculateSalesByDayOfWeekDomain import InsightCalculateSalesByDayOfWeekDomain
 from domain.model.insightTopLocationDomain import InsightTopLocationDomain
+from domain.model.insightTopRatedStoreDomain import InsightTopRatedStoreDomain
 from domain.model.insightTopSoldProductDomain import InsightTopSoldProductDomain
 from domain.repository.insightRepository import InsightRepository
 
@@ -32,3 +33,6 @@ class InsightController:
         end_date: datetime
     ) -> dict[str, list[InsightTopSoldProductDomain]]:
         return self.repository.get_top_sold_products(start_date, end_date)
+
+    def get_top_rated_stores(self, start: float, end: float) -> dict[str, list[InsightTopRatedStoreDomain]]:
+        return self.repository.get_top_rated_stores(start, end)

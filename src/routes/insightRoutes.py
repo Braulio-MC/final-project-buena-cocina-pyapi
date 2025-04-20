@@ -6,9 +6,11 @@ from controllers.insightController import InsightController
 from core.constants import INSIGHT_ROUTES_GET_TOP_LOCATIONS_ON_MAP_CACHE_EXPIRE
 from core.constants import INSIGHT_ROUTES_GET_TOP_SOLD_PRODUCTS_CACHE_EXPIRE
 from core.constants import INSIGHT_ROUTES_CALCULATE_SALES_BY_DAY_OF_WEEK_CACHE_EXPIRE
+from core.constants import INSIGHT_ROUTES_GET_TOP_RATED_STORES_CACHE_EXPIRE
 from core.redisKeyBuilder import insight_routes_get_top_locations_on_map_key_builder
 from core.redisKeyBuilder import insight_routes_get_top_sold_products_key_builder
 from core.redisKeyBuilder import insight_routes_calculate_sales_by_day_of_week_key_builder
+from core.redisKeyBuilder import insight_routes_get_top_rated_stores_key_builder
 
 router = APIRouter()
 
@@ -61,3 +63,19 @@ def get_top_sold_products(
     :return un diccionario que contiene los 10 productos más vendidos
     """
     return controller.get_top_sold_products(start_date, end_date)
+
+@router.get('/insights/get-top-rated-stores')
+@cache(
+    expire=INSIGHT_ROUTES_GET_TOP_RATED_STORES_CACHE_EXPIRE,
+    key_builder=insight_routes_get_top_rated_stores_key_builder
+)
+def get_top_rated_stores(
+    controller: Annotated[InsightController, Depends()],
+    start: Annotated[Optional[float], Query()] = 4,
+    end: Annotated[Optional[float], Query()] = 5,
+):
+    """Endpoint para obtener las 10 tiendas con mejor calificación
+    :optional parameters: start, end
+    :return un diccionario que contiene las 10 tiendas con mejor calificación
+    """
+    return controller.get_top_rated_stores(start, end)

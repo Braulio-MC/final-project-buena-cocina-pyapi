@@ -6,12 +6,14 @@ from core.constants import BIGQUERY_PROJECT_NAME
 from core.constants import BIGQUERY_SP_GET_TOP_LOCATIONS_ON_MAP_NAME
 from core.constants import BIGQUERY_SP_CALC_SALES_BY_DAY_OF_WEEK_NAME
 from core.constants import BIGQUERY_SP_GET_TOP_SOLD_PRODUCTS_NAME
+from core.constants import BIGQUERY_SP_GET_TOP_RATED_STORES_NAME
 from google.cloud.bigquery import QueryJobConfig
 from google.cloud.bigquery.query import ScalarQueryParameterType, ScalarQueryParameter
 from google.api_core.exceptions import GoogleAPIError
 from core.firebaseHelper import provide_bigquery_client
 from data.model.insightTopLocationNetwork import InsightTopLocationNetwork
 from data.model.insightCalculateSalesByDayOfWeekNetwork import InsightCalculateSalesByDayOfWeekNetwork
+from data.model.insightTopRatedStoreNetwork import InsightTopRatedStoreNetwork
 from data.model.insightTopSoldProductNetwork import InsightTopSoldProductNetwork
 
 class InsightService:
@@ -62,4 +64,19 @@ class InsightService:
             return [InsightTopSoldProductNetwork.from_bq_row(row) for row in query_job.result()]
         except GoogleAPIError as e:
             print(f"Error on insight service (get_top_sold_products): {e}")
+            return []
+        
+    def get_top_rated_stores(self, start: float, end: float) -> list[InsightTopRatedStoreNetwork]:
+        try:
+            sp_query = f"CALL `{BIGQUERY_PROJECT_NAME}.{BIGQUERY_DATASET_NAME}.{BIGQUERY_SP_GET_TOP_RATED_STORES_NAME}`(@_start, @_end)"
+            job_config = QueryJobConfig(
+                query_parameters=[
+                    ScalarQueryParameter("_start", ScalarQueryParameterType("FLOAT64"), start),
+                    ScalarQueryParameter("_end", ScalarQueryParameterType("FLOAT64"), end)
+                ]
+            )
+            query_job = self.bigquery_client.query(sp_query, job_config=job_config)
+            return [InsightTopRatedStoreNetwork.from_bq_row(row) for row in query_job.result()]
+        except GoogleAPIError as e:
+            print(f"Error on insight service (get_top_rated_stores): {e}")
             return []
