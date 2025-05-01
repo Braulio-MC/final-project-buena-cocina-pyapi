@@ -23,3 +23,8 @@ PRODUCT_REVIEW_ROUTES_PAGING_BY_USER_ID_WITH_RANGE_CACHE_EXPIRE = 60 * 3 # 3 min
 STORE_REVIEW_ROUTES_GET_ALL_CACHE_EXPIRE = 60 * 10 # 10 minutes
 STORE_REVIEW_ROUTES_PAGING_BY_STORE_ID_WITH_RANGE_CACHE_EXPIRE = 60 * 5 # 5 minutes
 STORE_REVIEW_ROUTES_PAGING_BY_USER_ID_WITH_RANGE_CACHE_EXPIRE = 60 * 3 # 3 minutes
+MAX_DISTANCE = 0.5  # mientras más bajo, más exigente
+EMBEDDINGS_MODEL = "intfloat/multilingual-e5-large"
+
+table_products = 'products'
+table_stores = 'stores'

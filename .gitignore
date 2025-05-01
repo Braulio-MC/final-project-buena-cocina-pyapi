@@ -173,8 +173,5 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-# requirements
-requirements.txt
-
 # big query
 *bq.json
