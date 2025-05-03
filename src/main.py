@@ -29,13 +29,12 @@ from routes.insightRoutes import router as insight_router
 from controllers.recommenderController import router as recommender_router
 from routes.botRoute import api_router as bot_query
 
-load_dotenv()
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     REDIS_SERVER_URL = os.getenv("REDIS_SERVER_URL", "redis://localhost:6379")
     try:
-        redis = aioredis.from_url(REDIS_SERVER_URL, encoding="utf-8", decode_responses=True)
+        redis = aioredis.from_url(REDIS_SERVER_URL)
         FastAPICache.init(RedisBackend(redis), prefix=REDIS_CACHE_PREFIX)
         print("Redis cache inicializado correctamente")
     except Exception as e:
