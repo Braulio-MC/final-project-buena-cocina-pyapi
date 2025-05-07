@@ -67,10 +67,10 @@ class ProductQueryProcessor:
 
             if categories:
                 categories = [cat.strip().lower() for cat in categories]
-                product_categories = product.get("category", [])
+                product_categories = product.get('categories', [])
                 product_category_matches = False
                 for prod_cat in product_categories:
-                    if any(cat in prod_cat.lower() for cat in categories):
+                    if any(prod_cat.lower() in cat for cat in categories):
                         product_category_matches = True
                         break
 

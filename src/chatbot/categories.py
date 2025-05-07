@@ -22,7 +22,7 @@ CATEGORY_SYNONYMS = {
         "dulces", "pasteles", "helados", "galletas", "pan", "roles", "tarta", "flan", "brownies", "chocolates"
     ],
     "saludable": [
-        "ensalada", "jugos", "batidos", "baguette", "vegetariano", "vegano", "tofu", "quinoa", "falafel", "smoothies"
+        "ensalada", "jugos", "batidos", "baguette", "vegetariano", "vegano", "tofu", "quinoa", "falafel", "smoothies", "vegana"
     ]
 }
 

@@ -8,7 +8,7 @@ class InsightTopSoldProductNetwork(BaseModel):
     name: str
     description: str
     image: str
-    category_name: str
+    categories: list[dict[str, str]]
     store_name: str
     store_owner_id: str
     discount_percentage: float
@@ -26,7 +26,7 @@ class InsightTopSoldProductNetwork(BaseModel):
             name = row['product_name'],
             description = row['product_description'],
             image = row['product_image'],
-            category_name = row['product_category_name'],
+            categories = row['product_categories'],
             store_name = row['product_store_name'],
             store_owner_id = row['product_store_owner_id'],
             discount_percentage = row['product_discount_percentage'],
@@ -44,7 +44,7 @@ class InsightTopSoldProductNetwork(BaseModel):
             name = self.name,
             description = self.description,
             image = self.image,
-            category_name = self.category_name,
+            categories = self.categories,
             store_name = self.store_name,
             store_owner_id = self.store_owner_id,
             discount_percentage = self.discount_percentage,

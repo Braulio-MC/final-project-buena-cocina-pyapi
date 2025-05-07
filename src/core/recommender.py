@@ -7,7 +7,9 @@ from sentence_transformers import SentenceTransformer
 model = SentenceTransformer(EMBEDDINGS_MODEL)
 
 def generate_embedding_product(product):
-    text = f"{product['name']} {product['description']} {' '.join(product.get('category', []))} {product['store']['name']}"
+    product_categories = product.get('categories', [])
+    product['categories'] = [cat['name'] for cat in product_categories] if isinstance(product_categories, list) else []
+    text = f"{product['name']} {product['description']} {' '.join(product.get('categories'))} {product['store']['name']} {product['price']}"
     embedding = model.encode(text).astype(np.float32)
     return embedding
 

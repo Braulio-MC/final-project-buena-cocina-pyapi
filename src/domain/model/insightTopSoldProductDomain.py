@@ -6,7 +6,7 @@ class InsightTopSoldProductDomain(BaseModel):
     name: str
     description: str
     image: str
-    category_name: str
+    categories: list[dict[str, str]]
     store_name: str
     store_owner_id: str
     discount_percentage: float

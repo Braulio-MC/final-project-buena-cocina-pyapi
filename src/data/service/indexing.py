@@ -39,8 +39,10 @@ def refresh_faiss_index_products():
             product = doc.to_dict()
             product_id = doc.id
             products_data[product_id] = product
-
-            text = f"{product['name']} {product['description']} {' '.join(product.get('category', []))} {product['store']['name']}"
+            product_categories = product.get('categories', [])
+            product['categories'] = [cat['name'] for cat in product_categories] if isinstance(product_categories, list) else []
+            
+            text = f"{product['name']} {product['description']} {' '.join(product.get('categories'))} {product['store']['name']} {product['price']}"
             embedding = m.model.encode(text).astype(np.float32)
 
             embeddings.append(embedding)
@@ -75,6 +77,8 @@ def refresh_faiss_index_stores():
             store = doc.to_dict()
             store_id = doc.id
             stores_data[store_id] = store
+            store['startTime'] = f"{store['startTime']['hour']}:{store['startTime']['minute']}"
+            store['endTime'] = f"{store['endTime']['hour']}:{store['endTime']['minute']}"
 
             text = f"{store['id']} {store['name']} {store['email']} {store['description']} {store['startTime']}-{store['endTime']} {store['rating']}"
             embedding = m.model.encode(text).astype(np.float32)
